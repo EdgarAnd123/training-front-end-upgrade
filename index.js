@@ -1,47 +1,80 @@
-document.getElementById('getText').addEventListener('click', getText);
-document.getElementById('getUsers').addEventListener('click', getUsers);
-document.getElementById('getPosts').addEventListener('click', getPosts);
+const template = document.createElement('template');
+template.innerHTML =  
+`
+<style> 
+    .user-card {
+        font-family: 'Arial', sans-seif;
+        background: #F4F4F4;
+        width: 500px;
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        grid-gap: 10px;
+        margin-bottom: 15px;
+        border-bottom: darkorchid 5px solid;
+    }
 
-function getText() {
-    fetch('sample.txt')
-    .then( (res) => res.text() )
-    .then( (data) => document.getElementById('output').innerHTML = data )
-    .catch( (err) => console.log(err) );
+    .user-card img {
+        width: 100%;
+    }
+
+    .user-card button {
+        cursor: pointer;
+        background: darkorchid;
+        color: #FFF;
+        border: 0;
+        border-radius: 5px;
+        padding: 5px 10px;
+    }
+</style>
+<div class="user-card">
+    <img />
+    <div>
+        <h3> </h3>
+        <div class="info">
+            <p> <slot name="email" /> </p>
+            <p> <slot name="phone" /> </p>
+        </div>
+        <button id="toggle-info"> Hide Info </button>
+    </div>
+</div>
+`
+
+class UserCard extends HTMLElement {
+    constructor() {
+        super();
+
+        this.showInfo = true;
+
+        this.attachShadow({ mode: 'open'});
+        this.shadowRoot.appendChild(template.content.cloneNode(true));
+        this.shadowRoot.querySelector('h3').innerText = this.getAttribute('name');
+        this.shadowRoot.querySelector('img').src = this.getAttribute('avatar');
+    }
+
+    toggleInfo() {
+        this.showInfo = !this.showInfo;
+
+        const info = this.shadowRoot.querySelector('.info');
+        const toggleBtn = this.shadowRoot.querySelector('#toggle-info');
+
+        if(this.showInfo) {
+            info.style.display = 'block';
+            toggleBtn.innerText = 'Hide Info';
+        } else {
+            info.style.display = 'none';
+            toggleBtn.innerText = 'Show Info';
+        }
+    }
+
+    connectedCallback() {
+        this.shadowRoot.querySelector('#toggle-info').addEventListener
+        ('click', () => this.toggleInfo() );
+    }
+
+    disconnectedCallback() {
+        this.shadowRoot.querySelector('#toggle-info').
+        removeEventListener();
+    }
 }
 
-function getUsers() {
-    fetch('users.json')
-    .then( (res) => res.json() )
-    .then( (data) => {
-        let output = `<h2> Users </h2>`
-        data.forEach( (user) => {
-            output += `
-            <ul>
-                <li> ID: ${user.id} </li>
-                <li> Name: ${user.name} </li>
-                <li> Email: ${user.email} </li>
-
-            </ul>
-            `
-        });
-        document.getElementById('output').innerHTML = output;
-
-    })
-}
-
-function getPosts() {
-    fetch('https://jsonplaceholder.typicode.com/posts')
-    .then( (res) => res.json())
-    .then( (data) => {
-        let output = '<h2> Posts </h2>';
-        data.forEach(function(post) {
-            output += `
-                <div>
-                    <h3> ${post.title} </h3>
-                    <p> ${post.body} </p>
-                </div>
-            `
-        })
-        document.getElementById('output').innerHTML = output;
-    })
-}
+window.customElements.define('user-card', UserCard);

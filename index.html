@@ -4,14 +4,21 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Fetch API </title>
+    <title> Web Components </title>
+    <style>
+        h3 { color: red; }
+    </style>
 </head>
 <body>
-    <button id="getText"> Get Text </button>
-    <button id="getUsers"> Get JSON </button>
-    <button id="getPosts"> Get API Data </button>
-    
-    <div id="output"></div>
+    <h3> Hello World </h3>
+    <user-card name="John Does" avatar="https://randomuser.me/api/portraits/men/1.jpg">
+        <div slot="email"> johnDoe@gmail.com </div>
+        <div slot="phone"> 555-789-4511 </div>
+    </user-card>
+    <user-card name="Jane Down" avatar="https://randomuser.me/api/portraits/women/1.jpg">
+        <div slot="email"> janeDown@gmail.com </div>
+        <div slot="phone"> 555-784-1586 </div>
+    </user-card>
 
     <script src="index.js"></script>
 </body>

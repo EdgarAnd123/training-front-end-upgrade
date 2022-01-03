@@ -1,80 +1,52 @@
-const template = document.createElement('template');
-template.innerHTML =  
-`
-<style> 
-    .user-card {
-        font-family: 'Arial', sans-seif;
-        background: #F4F4F4;
-        width: 500px;
-        display: grid;
-        grid-template-columns: 1fr 2fr;
-        grid-gap: 10px;
-        margin-bottom: 15px;
-        border-bottom: darkorchid 5px solid;
-    }
+import api from './api.js'
 
-    .user-card img {
-        width: 100%;
-    }
+google.charts.load('current', { 'packages': ['corechart'] });
+google.charts.setOnLoadCallback(drawChart);
 
-    .user-card button {
-        cursor: pointer;
-        background: darkorchid;
-        color: #FFF;
-        border: 0;
-        border-radius: 5px;
-        padding: 5px 10px;
-    }
-</style>
-<div class="user-card">
-    <img />
-    <div>
-        <h3> </h3>
-        <div class="info">
-            <p> <slot name="email" /> </p>
-            <p> <slot name="phone" /> </p>
-        </div>
-        <button id="toggle-info"> Hide Info </button>
-    </div>
-</div>
-`
+async function drawChart() {
+    const dataTable = new google.visualization.DataTable();
+    const tableOptions = {
+        'title': 'Posts created by users',
+        'width': 500,
+        'height': 500
+    };
+    const postsList = await api();
+    const posts = [...new Map(postsList.map( post => [post['userId'], post])).values()];
+    const postsOccurrencesMap = counterPostsOccurrences(postsList, 'userId');
 
-class UserCard extends HTMLElement {
-    constructor() {
-        super();
+    dataTable.addColumn('string', 'User Id');
+    dataTable.addColumn('number', 'Total Posts');
 
-        this.showInfo = true;
+    posts.forEach( post => dataTable.addRow([post.userId.toString(), postOccurrences(postsOccurrencesMap, post.userId)]));
 
-        this.attachShadow({ mode: 'open'});
-        this.shadowRoot.appendChild(template.content.cloneNode(true));
-        this.shadowRoot.querySelector('h3').innerText = this.getAttribute('name');
-        this.shadowRoot.querySelector('img').src = this.getAttribute('avatar');
-    }
+    const pieChart = new google.visualization.PieChart(document.getElementById('pie_chart_div'));
+    pieChart.draw(dataTable, tableOptions);
 
-    toggleInfo() {
-        this.showInfo = !this.showInfo;
-
-        const info = this.shadowRoot.querySelector('.info');
-        const toggleBtn = this.shadowRoot.querySelector('#toggle-info');
-
-        if(this.showInfo) {
-            info.style.display = 'block';
-            toggleBtn.innerText = 'Hide Info';
-        } else {
-            info.style.display = 'none';
-            toggleBtn.innerText = 'Show Info';
-        }
-    }
-
-    connectedCallback() {
-        this.shadowRoot.querySelector('#toggle-info').addEventListener
-        ('click', () => this.toggleInfo() );
-    }
-
-    disconnectedCallback() {
-        this.shadowRoot.querySelector('#toggle-info').
-        removeEventListener();
-    }
+    const barChart = new google.visualization.BarChart(document.getElementById('bar_chart_div'));
+    barChart.draw(dataTable, tableOptions);
 }
 
-window.customElements.define('user-card', UserCard);
+function counterPostsOccurrences(postsArray, key) {
+    let postsOccurrences = [];
+
+    postsArray.forEach( (post) => {
+        if (postsOccurrences.some(item => item[key] == post[key]) ) {
+            postsOccurrences.forEach( e => {
+                if (e[key] === post[key]) {
+                    e.occurrence++
+                }
+            })
+        } else {
+            let newPostOcurrence = {};
+            newPostOcurrence[key] = post[key];
+            newPostOcurrence.occurrence = 1;
+            postsOccurrences = [...postsOccurrences, newPostOcurrence];
+        }
+    })
+
+    return postsOccurrences;
+}
+
+function postOccurrences(postsOccurrences, userId) {
+    return postsOccurrences.find( post => post.userId === userId ).occurrence;
+}

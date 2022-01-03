@@ -1,25 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Web Components </title>
-    <style>
-        h3 { color: red; }
-    </style>
-</head>
-<body>
-    <h3> Hello World </h3>
-    <user-card name="John Does" avatar="https://randomuser.me/api/portraits/men/1.jpg">
-        <div slot="email"> johnDoe@gmail.com </div>
-        <div slot="phone"> 555-789-4511 </div>
-    </user-card>
-    <user-card name="Jane Down" avatar="https://randomuser.me/api/portraits/women/1.jpg">
-        <div slot="email"> janeDown@gmail.com </div>
-        <div slot="phone"> 555-784-1586 </div>
-    </user-card>
+<html>
+  <head>
+    <!--Load the AJAX API-->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="module" src="index.js"></script>
+  </head>
 
-    <script src="index.js"></script>
-</body>
+  <body>
+    <!--Div that will hold the pie chart-->
+    <div id="bar_chart_div"></div>
+    <div id="pie_chart_div"></div>
+  </body>
 </html>

@@ -28,22 +28,22 @@ async function drawChart() {
 
 function counterPostsOccurrences(postsArray, key) {
     let postsOccurrences = [];
+    let postOccurrence;
 
-    postsArray.forEach( (post) => {
-        if (postsOccurrences.some(item => item[key] == post[key]) ) {
-            postsOccurrences.forEach( e => {
-                if (e[key] === post[key]) {
-                    e.occurrence++
-                }
-            })
+    postsArray.forEach( post => {
+        postOccurrence = postsOccurrences.find(item => item[key] == post[key]);
+        
+        if (postOccurrence) {
+            postOccurrence.occurrence++;
         } else {
-            let newPostOcurrence = {};
-            newPostOcurrence[key] = post[key];
-            newPostOcurrence.occurrence = 1;
+            let newPostOcurrence = {
+                [key]: post[key],
+                ['occurrence']: 1
+            };
             postsOccurrences = [...postsOccurrences, newPostOcurrence];
         }
     })
-
+    
     return postsOccurrences;
 }
 

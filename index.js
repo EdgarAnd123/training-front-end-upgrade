@@ -1,4 +1,4 @@
-import api from './api.js'
+import api from './api/api.js'
 
 google.charts.load('current', { 'packages': ['corechart'] });
 google.charts.setOnLoadCallback(drawChart);
@@ -10,7 +10,7 @@ async function drawChart() {
         'width': 500,
         'height': 500
     };
-    const postsList = await api();
+    const postsList = await api("https://jsonplaceholder.typicode.com/posts?_start=0&_limit=94");
     const posts = [...new Map(postsList.map( post => [post['userId'], post])).values()];
     const postsOccurrencesMap = counterPostsOccurrences(postsList, 'userId');
 

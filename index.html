@@ -1,13 +1,17 @@
 <html>
   <head>
-    <!--Load the AJAX API-->
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="module" src="index.js"></script>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Web Components </title>
   </head>
-
   <body>
-    <!--Div that will hold the pie chart-->
-    <div id="bar_chart_div"></div>
-    <div id="pie_chart_div"></div>
+    <custom-chart type="bar" api="https://jsonplaceholder.typicode.com/posts?_start=0&_limit=94" title="Posts created by users in bar chart">
+    </custom-chart>
+    <custom-chart type="pie" api="https://jsonplaceholder.typicode.com/posts" title="Posts created by users in pie chart">
+    </custom-chart>
+    
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="module" src="charts.js"></script>
   </body>
 </html>

@@ -3,8 +3,12 @@ import api from './api/api.js';
 const template = document.createElement('template');
 template.innerHTML =  
 `
-<div id="chart">
-</div>
+<style>
+    #chart {
+        max-width: 1500px
+    }
+</style>
+<div id="chart"> </div>
 `
 class Chart extends HTMLElement {
     constructor() {
@@ -13,24 +17,27 @@ class Chart extends HTMLElement {
         this.attachShadow({ mode: 'open' });
         this.shadowRoot.appendChild(template.content.cloneNode(true));
 
-        this.chartType = this.getAttribute('type');
-        this.apiSource = this.getAttribute('api');
         this.title = this.getAttribute('title');
+        this.apiSource = this.getAttribute('api');
+        this.chartType = this.getAttribute('type');
+
         this.drawChart = this.drawChart.bind(this);
+        this.chartResizer = this.chartResizer.bind(this);
+        
+        window.addEventListener('resize', this.chartResizer);
     }
 
     async drawChart() {
         const dataTable = new google.visualization.DataTable();
         const tableOptions = {
             'title': `${this.title}`,
-            'width': 500,
-            'height': 500
+            'height': 350
         };
-        const chartMap = {
+        const chartsMap = {
             'bar': () => new google.visualization.BarChart(this.shadowRoot.querySelector('#chart')),
             'pie': () => new google.visualization.PieChart(this.shadowRoot.querySelector('#chart')),
             'default': () => new google.visualization.BarChart(this.shadowRoot.querySelector('#chart'))
-          };
+        };
 
         dataTable.addColumn('string', 'User Id');
         dataTable.addColumn('number', 'Total Posts');
@@ -44,7 +51,7 @@ class Chart extends HTMLElement {
             
                 posts.forEach( post => dataTable.addRow([post.userId.toString(), this.postOccurrences(postsOccurrencesMap, post.userId)]));
                 
-                const chart = (chartMap[this.chartType] || chartMap['default'])();
+                const chart = (chartsMap[this.chartType] || chartsMap['default'])();
                 chart.draw(dataTable, tableOptions);
             }
         } catch(e) {
@@ -77,10 +84,19 @@ class Chart extends HTMLElement {
         
         return postsOccurrences;
     }
-    
+
     postOccurrences(postsOccurrences, userId) {
         return postsOccurrences.find( post => post.userId === userId ).occurrence;
     }
+
+    chartResizer() {
+        const options = {
+            'width': '100%'
+        };
+    
+        const data = new google.visualization.DataTable([]);
+        this.drawChart(data, options);
+    };
 }
 
 window.customElements.define('custom-chart', Chart);

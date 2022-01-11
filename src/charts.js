@@ -1,4 +1,4 @@
-import api from './api/api.js';
+import api from '../api/api.js';
 
 const template = document.createElement('template');
 template.innerHTML =  

@@ -1,0 +1,24 @@
+.title {
+  text-align: center;
+}
+
+.container {
+  background: #e4e4e4;
+  max-width: 1500px;
+  overflow: hidden;
+  margin: 1rem auto;
+  padding: 1rem;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  border-radius: .5rem;
+}
+
+.container .chart_wrapper {
+  background: lightblue;
+  border-radius: .5rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+
+/*# sourceMappingURL=/chart.5f37dd5c.css.map */

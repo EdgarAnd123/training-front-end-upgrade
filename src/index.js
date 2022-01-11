@@ -1,4 +1,4 @@
-import api from './api/api.js'
+import api from '../api/api.js'
 
 google.charts.load('current', { 'packages': ['corechart'] });
 google.charts.setOnLoadCallback(drawChart);
